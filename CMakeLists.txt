@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.22)
 project(graphicbox)
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
+set(CPP_RTTI_ENABLED OFF)
+
+include(CheckIPOSupported)
+include(${CMAKE_SOURCE_DIR}/cmake/utils.cmake)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 
@@ -17,9 +22,6 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
     set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_SOURCE_DIR}/bin )
 	set( CMAKE_${OUTPUTCONFIG}_POSTFIX ${OUTPUTCONFIG})
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
-
-
-set(CPP_RTTI_ENABLED OFF)
 
 if (MSVC)
 
@@ -130,8 +132,7 @@ endif()
 set(CMAKE_EXE_LINKER_FLAGS_DISTRIBUTION "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 set(CMAKE_SHARED_LINKER_FLAGS_DISTRIBUTION "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
 # Enable link time optimization in Release and Distribution mode if requested and available
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
-
+#set_property(TARGET ... PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 if (EMSCRIPTEN)
     option(TINYUI_WASM_SINGLE_FILE "Embed WASM inside the generated .js" ON)
@@ -140,6 +141,7 @@ endif()
 option(TINYUI_SANITIZE_THREAD         "Enable thread sanitizer" OFF)
 option(TINYUI_SANITIZE_ADDRESS        "Enable address sanitizer" OFF)
 option(TINYUI_SANITIZE_UNDEFINED      "Enable undefined sanitizer" OFF)
+option(TINYUI_ENABLE_TESTS      	  "Enable tests" ON)
 
 if (TINYUI_SANITIZE_THREAD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=thread")
@@ -160,4 +162,8 @@ find_package(Vulkan)
 
 add_subdirectory(libs)
 add_subdirectory(sources)
+
+if(TINYUI_ENABLE_TESTS)
+enable_testing()
 add_subdirectory(tests)
+endif()
