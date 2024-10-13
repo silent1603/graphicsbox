@@ -2,23 +2,14 @@ set(glad_path ${CMAKE_SOURCE_DIR}/libs/glad)
 
 set(glad_source 
             ${glad_path}/include/EGL/eglplatform.h 
-            ${glad_path}/include/glad/egl.h 
             ${glad_path}/include/glad/gl.h 
-            ${glad_path}/include/glad/gles1.h 
-            ${glad_path}/include/glad/gles2.h  
             ${glad_path}/include/KHR/khrplatform.h 
-            ${glad_path}/src/gl.c 
-            ${glad_path}/src/egl.c 
-            ${glad_path}/src/gles1.c 
-            ${glad_path}/src/gles2.c)
+            ${glad_path}/src/gl.c)
 
 if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
 
 else()
-        
-    if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
-
-    elseif(CMAKE_SYSTEM_NAME STREQUAL Windows)
+    if(CMAKE_SYSTEM_NAME STREQUAL Windows OR CMAKE_SYSTEM_NAME STREQUAL Darwin)
         list(APPEND glad_source 
                 ${glad_path}/include/glad/wgl.h  
                 ${glad_path}/src/wgl.c)
@@ -26,7 +17,14 @@ else()
         list(APPEND glad_source     
                 ${glad_path}/include/glad/glx.h 
                 ${glad_path}/src/glx.c )
-    elseif (CMAKE_SYSTEM_NAME STREQUAL Android) 
+    elseif (CMAKE_SYSTEM_NAME STREQUAL Android OR CMAKE_SYSTEM_NAME STREQUAL IOS) 
+        list(APPEND glad_source  
+            ${glad_path}/include/glad/egl.h  
+            ${glad_path}/include/glad/gles1.h 
+            ${glad_path}/include/glad/gles2.h     
+            ${glad_path}/src/egl.c 
+            ${glad_path}/src/gles1.c 
+            ${glad_path}/src/gles2.c )
     endif()
 endif()
 
