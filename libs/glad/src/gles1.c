@@ -1055,6 +1055,155 @@ int gladLoadGLES1( GLADloadfunc load) {
 
  
 
+#ifdef GLAD_GLES1
+
+#ifndef GLAD_LOADER_LIBRARY_C_
+#define GLAD_LOADER_LIBRARY_C_
+
+#include <stddef.h>
+#include <stdlib.h>
+
+#if GLAD_PLATFORM_WIN32
+#include <windows.h>
+#else
+#include <dlfcn.h>
+#endif
+
+
+static void* glad_get_dlopen_handle(const char *lib_names[], int length) {
+    void *handle = NULL;
+    int i;
+
+    for (i = 0; i < length; ++i) {
+#if GLAD_PLATFORM_WIN32
+  #if GLAD_PLATFORM_UWP
+        size_t buffer_size = (strlen(lib_names[i]) + 1) * sizeof(WCHAR);
+        LPWSTR buffer = (LPWSTR) malloc(buffer_size);
+        if (buffer != NULL) {
+            int ret = MultiByteToWideChar(CP_ACP, 0, lib_names[i], -1, buffer, buffer_size);
+            if (ret != 0) {
+                handle = (void*) LoadPackagedLibrary(buffer, 0);
+            }
+            free((void*) buffer);
+        }
+  #else
+        handle = (void*) LoadLibraryA(lib_names[i]);
+  #endif
+#else
+        handle = dlopen(lib_names[i], RTLD_LAZY | RTLD_LOCAL);
+#endif
+        if (handle != NULL) {
+            return handle;
+        }
+    }
+
+    return NULL;
+}
+
+static void glad_close_dlopen_handle(void* handle) {
+    if (handle != NULL) {
+#if GLAD_PLATFORM_WIN32
+        FreeLibrary((HMODULE) handle);
+#else
+        dlclose(handle);
+#endif
+    }
+}
+
+static GLADapiproc glad_dlsym_handle(void* handle, const char *name) {
+    if (handle == NULL) {
+        return NULL;
+    }
+
+#if GLAD_PLATFORM_WIN32
+    return (GLADapiproc) GetProcAddress((HMODULE) handle, name);
+#else
+    return GLAD_GNUC_EXTENSION (GLADapiproc) dlsym(handle, name);
+#endif
+}
+
+#endif /* GLAD_LOADER_LIBRARY_C_ */
+
+#include <glad/egl.h>
+
+struct _glad_gles1_userptr {
+    void *handle;
+    PFNEGLGETPROCADDRESSPROC get_proc_address_ptr;
+};
+
+
+static GLADapiproc glad_gles1_get_proc(void *vuserptr, const char* name) {
+    struct _glad_gles1_userptr userptr = *(struct _glad_gles1_userptr*) vuserptr;
+    GLADapiproc result = NULL;
+
+    result = glad_dlsym_handle(userptr.handle, name);
+    if (result == NULL) {
+        result = userptr.get_proc_address_ptr(name);
+    }
+
+    return result;
+}
+
+static void* _glad_GLES1_loader_handle = NULL;
+
+static void* glad_gles1_dlopen_handle(void) {
+#if GLAD_PLATFORM_APPLE
+    static const char *NAMES[] = {"libGLESv1_CM.dylib"};
+#elif GLAD_PLATFORM_WIN32
+    static const char *NAMES[] = {"GLESv1_CM.dll", "libGLESv1_CM", "libGLES_CM.dll"};
+#else
+    static const char *NAMES[] = {"libGLESv1_CM.so.1", "libGLESv1_CM.so", "libGLES_CM.so.1"};
+#endif
+
+    if (_glad_GLES1_loader_handle == NULL) {
+        _glad_GLES1_loader_handle = glad_get_dlopen_handle(NAMES, sizeof(NAMES) / sizeof(NAMES[0]));
+    }
+
+    return _glad_GLES1_loader_handle;
+}
+
+static struct _glad_gles1_userptr glad_gles1_build_userptr(void *handle) {
+    struct _glad_gles1_userptr userptr;
+    userptr.handle = handle;
+    userptr.get_proc_address_ptr = eglGetProcAddress;
+    return userptr;
+}
+
+int gladLoaderLoadGLES1(void) {
+    int version = 0;
+    void *handle = NULL;
+    int did_load = 0;
+    struct _glad_gles1_userptr userptr;
+
+    if (eglGetProcAddress == NULL) {
+        return 0;
+    }
+
+    did_load = _glad_GLES1_loader_handle == NULL;
+    handle = glad_gles1_dlopen_handle();
+    if (handle != NULL) {
+        userptr = glad_gles1_build_userptr(handle);
+
+        version = gladLoadGLES1UserPtr(glad_gles1_get_proc, &userptr);
+
+        if (!version && did_load) {
+            gladLoaderUnloadGLES1();
+        }
+    }
+
+    return version;
+}
+
+
+
+void gladLoaderUnloadGLES1(void) {
+    if (_glad_GLES1_loader_handle != NULL) {
+        glad_close_dlopen_handle(_glad_GLES1_loader_handle);
+        _glad_GLES1_loader_handle = NULL;
+    }
+}
+
+#endif /* GLAD_GLES1 */
 
 #ifdef __cplusplus
 }
