@@ -25,16 +25,16 @@ message(STATUS "SYSTEM ${CMAKE_SYSTEM_NAME}")
 # Emscripten-specific linker options
 if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
     message(STATUS "Configuration Emscripten")
-    list(APPEND TARGET_SOURCE cpp/entry/wasm/main.cpp)
+    list(APPEND TARGET_SOURCE entry/wasm/main.cpp)
 
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     target_link_options(${TARGET} PRIVATE -sEXPORTED_FUNCTIONS=_main)
     # File system support: https://emscripten.org/docs/api_reference/Filesystem-API.html#including-file-system-support
-    target_link_options(${TARGET} PRIVATE -sWASMFS -sFORCE_FILESYSTEM -sEXPORTED_RUNTIME_METHODS=['FS'])
+    target_link_options(${TARGET} PRIVATE -sWASMFS -sFORCE_FILESYSTEM -sEXPORTED_RUNTIME_METHODS=['ccall','cwrap','FS'])
     # use our own minimal shell.html
-    target_link_options(${TARGET} PRIVATE --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/html/shell.html)
+    target_link_options(${TARGET} PRIVATE --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/entry/wasm/html/shell.html)
     # link with WebGL2
-    target_link_options(${TARGET} PRIVATE -sUSE_WEBGL2=1 --bind -sALLOW_MEMORY_GROWTH=1 -sNO_EXIT_RUNTIME=0  ${EXTRA_FLAGS}  --preload-file ${PROJECT_SOURCE_DIR}/assets@/ )
+    target_link_options(${TARGET} PRIVATE -sUSE_WEBGL2=1 --bind -sALLOW_MEMORY_GROWTH=1 -sNO_EXIT_RUNTIME=1  ${EXTRA_FLAGS}  --preload-file ${PROJECT_SOURCE_DIR}/assets@/ )
     # link with WebGPU 
     #-sASYNCIFY # Required by WebGPU-C++
     target_link_options(${TARGET} PRIVATE -sUSE_WEBGPU -sASYNCIFY)
@@ -63,7 +63,7 @@ target_link_libraries(${TARGET} PUBLIC glad)
 
     if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
         message(STATUS "Configuration OSX")
-        list(APPEND TARGET_SOURCE cpp/entry/osx/main.mm)
+        list(APPEND TARGET_SOURCE entry/osx/main.mm)
         target_compile_options(${TARGET} PRIVATE -x objective-c)
         target_link_libraries(${TARGET} PUBLIC
             "-framework QuartzCore"
@@ -72,7 +72,7 @@ target_link_libraries(${TARGET} PUBLIC glad)
             "-framework Metal")
     elseif(CMAKE_SYSTEM_NAME STREQUAL Windows)
         message(STATUS "Configuration Window")
-        list(APPEND TARGET_SOURCE cpp/entry/win32/main.cpp)
+        list(APPEND TARGET_SOURCE entry/win32/main.cpp)
         # OpenGL
         find_package(OpenGL REQUIRED)
         target_link_libraries(${TARGET} PUBLIC ${OPENGL_gl_LIBRARY})
@@ -81,14 +81,13 @@ target_link_libraries(${TARGET} PUBLIC glad)
         endif()
     elseif (CMAKE_SYSTEM_NAME STREQUAL Linux) 
         message(STATUS "Configuration Linux")
-        list(APPEND TARGET_SOURCE cpp/entry/wasm/main.cpp)
+        list(APPEND TARGET_SOURCE entry/wasm/main.cpp)
         target_link_libraries(${TARGET} INTERFACE X11 Xi Xcursor GL dl m)
         target_link_libraries(${TARGET} PUBLIC Threads::Threads)
-    elseif (CMAKE_SYSTEM_NAME STREQUAL Linux) 
+    elseif (CMAKE_SYSTEM_NAME STREQUAL Android) 
         message(STATUS "Configuration Android")
         target_link_libraries(${TARGET} INTERFACE X11 Xi Xcursor GL dl m)
         target_link_libraries(${TARGET} PUBLIC Threads::Threads)
-    
     endif()
 endif()
 

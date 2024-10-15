@@ -1,4 +1,4 @@
-
+include(FetchContent)
 
 function(add_IPO TARGET)
   # Check if the current CMake version supports IPO (introduced in CMake 3.9+)
@@ -11,4 +11,20 @@ function(add_IPO TARGET)
   if(RESULT)
     set_property(TARGET ${TARGET} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
   endif()
-endfunction()
+endfunction(add_IPO)
+
+
+function(download_file url path hash)
+
+FetchContent_Declare(download_${hash}
+URL ${url}
+URL_HASH SHA256=${hash}
+DOWNLOAD_NO_EXTRACT true 
+SOURCE_DIR   ${path}
+)
+
+if(NOT download_${hash}_POPULATED)
+  FetchContent_Populate(download_${hash})
+endif()
+
+endfunction(download_file)
