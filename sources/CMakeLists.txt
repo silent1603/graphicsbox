@@ -11,11 +11,11 @@ endif()
 
 
 target_include_directories(${TARGET} PUBLIC 
-    ${CMAKE_SOURCE_DIR}/libs/imgui
-    ${CMAKE_SOURCE_DIR}/libs/imgui/backends
-    ${CMAKE_SOURCE_DIR}/libs/stb 
-    ${CMAKE_SOURCE_DIR}/libs/cglm/include 
-    ${CMAKE_SOURCE_DIR}/libs/glad/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/imgui/ 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/imgui/backends/ 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/stb/ 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/cglm/include/ 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/glad/include/ 
 )
 
 set(common_lib imgui stb cglm)
@@ -25,7 +25,7 @@ message(STATUS "SYSTEM ${CMAKE_SYSTEM_NAME}")
 # Emscripten-specific linker options
 if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
     message(STATUS "Configuration Emscripten")
-    list(APPEND TARGET_SOURCE entry/wasm/main.cpp)
+    list(APPEND TARGET_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/entry/wasm/main.cpp)
 
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     target_link_options(${TARGET} PRIVATE -sEXPORTED_FUNCTIONS=_main)
@@ -63,7 +63,7 @@ target_link_libraries(${TARGET} PUBLIC glad)
 
     if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
         message(STATUS "Configuration OSX")
-        list(APPEND TARGET_SOURCE entry/osx/main.mm)
+        list(APPEND TARGET_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/entry/osx/main.mm)
         target_compile_options(${TARGET} PRIVATE -x objective-c)
         target_link_libraries(${TARGET} PUBLIC
             "-framework QuartzCore"
@@ -72,7 +72,7 @@ target_link_libraries(${TARGET} PUBLIC glad)
             "-framework Metal")
     elseif(CMAKE_SYSTEM_NAME STREQUAL Windows)
         message(STATUS "Configuration Window")
-        list(APPEND TARGET_SOURCE entry/win32/main.cpp)
+        list(APPEND TARGET_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/entry/win32/main.cpp)
         # OpenGL
         find_package(OpenGL REQUIRED)
         target_link_libraries(${TARGET} PUBLIC ${OPENGL_gl_LIBRARY})
@@ -85,7 +85,7 @@ target_link_libraries(${TARGET} PUBLIC glad)
         message(STATUS "X11_FOUND = ${X11_FOUND}")
         message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
         message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
-        list(APPEND TARGET_SOURCE entry/linux/main.cpp)
+        list(APPEND TARGET_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/entry/linux/main.cpp)
         target_link_libraries(${TARGET} PUBLIC X11 Xi Xcursor GL dl m)
         target_link_libraries(${TARGET} PUBLIC Threads::Threads)
     elseif (CMAKE_SYSTEM_NAME STREQUAL Android) 
@@ -96,7 +96,7 @@ endif()
 target_sources(${TARGET} PUBLIC ${TARGET_SOURCE})
 
 # Set the source and destination paths for the folder
-set(ASSET_SOURCE_DIR ${CMAKE_SOURCE_DIR}/assets)
+set(ASSET_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../assets)
 set(ASSET_DESTINATION_DIR ${CMAKE_BINARY_DIR}/assets)
 
 # Add a custom command to copy the folder after building
@@ -109,3 +109,14 @@ add_custom_command(
 
 # Optionally, add a custom target to ensure the copy happens as part of the build process
 add_custom_target(copy_assets ALL DEPENDS ${TARGET})
+list(APPEND INSTALL_TARGETS_LIST ${TARGET})
+install(TARGETS ${INSTALL_TARGETS_LIST}
+        EXPORT GraphicsBoxTargets
+        LIBRARY DESTINATION ${PACKAGE_INSTALL_PATH}/lib
+        ARCHIVE DESTINATION ${PACKAGE_INSTALL_PATH}/lib
+        RUNTIME DESTINATION ${PACKAGE_INSTALL_PATH}/bin)
+
+install(EXPORT GraphicsBoxTargets
+        FILE GraphicsBoxTargets.cmake
+        NAMESPACE GraphicsBox::
+        DESTINATION ${PACKAGE_INSTALL_PATH}/cmake/GraphicsBox)

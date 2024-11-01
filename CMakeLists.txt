@@ -5,11 +5,16 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CPP_RTTI_ENABLED OFF)
 
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 include(CheckIPOSupported)
+include(CPack)
+include(CMakeFindDependencyMacro)
 include(${CMAKE_SOURCE_DIR}/cmake/utils.cmake)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
-
+set(PACKAGE_INSTALL_PATH "${CMAKE_SOURCE_DIR}/package")
+set(INSTALL_TARGETS_LIST "")
 if (CMAKE_SYSTEM_NAME STREQUAL Linux)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
@@ -31,7 +36,7 @@ if (MSVC)
 	endif()
 
 	# Set general compiler flags
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /Gm- /MP /nologo /diagnostics:classic /FC /fp:except- /Zc:inline")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus /Gm- /MP /nologo /diagnostics:classic /FC /fp:except- /Zc:inline /ZI /INCREMENTAL")
 	
 	# Optionally generate debug symbols
 	if (GENERATE_DEBUG_SYMBOLS)
@@ -172,8 +177,12 @@ if (TINYUI_SANITIZE_THREAD)
 endif()
 
 if (TINYUI_SANITIZE_ADDRESS)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+	if(MSVC)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /fsanitize=address")
+	else()
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+	endif()
 endif()
 
 if (TINYUI_SANITIZE_UNDEFINED)

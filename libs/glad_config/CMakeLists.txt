@@ -27,7 +27,7 @@ else()
             ${glad_path}/src/gles2.c )
     endif()
 endif()
-
+set(TARGET glad)
 add_library(glad STATIC ${glad_source})
 
-target_include_directories(glad PRIVATE ${glad_path}/include)
+target_include_directories(${TARGET} PRIVATE ${glad_path}/include)
