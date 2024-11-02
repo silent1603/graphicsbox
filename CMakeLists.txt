@@ -13,7 +13,7 @@ include(CMakeFindDependencyMacro)
 include(${CMAKE_SOURCE_DIR}/cmake/utils.cmake)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
-set(PACKAGE_INSTALL_PATH "${CMAKE_SOURCE_DIR}/package")
+set(PACKAGE_INSTALL_PATH "${CMAKE_SOURCE_DIR}/package/")
 set(INSTALL_TARGETS_LIST "")
 if (CMAKE_SYSTEM_NAME STREQUAL Linux)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
