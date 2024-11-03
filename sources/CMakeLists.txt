@@ -33,7 +33,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
     # File system support: https://emscripten.org/docs/api_reference/Filesystem-API.html#including-file-system-support
     target_link_options(${TARGET} PRIVATE -sWASMFS -sFORCE_FILESYSTEM -sEXPORTED_RUNTIME_METHODS=['ccall','cwrap','FS'])
     # use our own minimal shell.html
-    target_link_options(${TARGET} PRIVATE --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/entry/wasm/html/shell.html)
+    target_link_options(${TARGET} PRIVATE --shell-file "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/entry/wasm/html/shell.html>")
     # link with WebGL2
     target_link_options(${TARGET} PRIVATE -sUSE_WEBGL2=1 --bind -sALLOW_MEMORY_GROWTH=1 -sNO_EXIT_RUNTIME=1  ${EXTRA_FLAGS}  --preload-file ${PROJECT_SOURCE_DIR}/assets@/ )
     # link with WebGPU 
@@ -64,7 +64,7 @@ target_link_libraries(${TARGET} PUBLIC glad)
 
     if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
         message(STATUS "Configuration OSX")
-        list(APPEND TARGET_SOURCE  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/entry/osx/main.mm>")
+        list(APPEND TARGET_SOURCE  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/entry/osx/main.swift>")
         target_compile_options(${TARGET} PRIVATE -x objective-c)
         target_link_libraries(${TARGET} PUBLIC
             "-framework QuartzCore"
