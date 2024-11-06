@@ -14,8 +14,3 @@ list(APPEND INSTALL_TARGETS_LIST cglm)
 #=== LIBRARY: Catch2
 add_subdirectory(Catch2)
 add_IPO(Catch2)
-
-#=== LIBRARY: glad
-add_subdirectory(glad_config)
-add_IPO(glad)
-list(APPEND INSTALL_TARGETS_LIST glad)
