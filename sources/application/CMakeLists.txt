@@ -61,7 +61,9 @@ else()
         message(STATUS "Configuration Window")
         list(APPEND TARGET_SOURCE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/entry/windows/main.cpp>")
         if(MSVC)
-            set_property(TARGET ${TARGET} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY " ${CMAKE_SOURCE_DIR}/bin/")
+        set_target_properties(${TARGET} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${TARGET}>"
+                        VS_DEBUGGER_COMMAND           "$<TARGET_FILE:${TARGET}>"
+                        VS_DEBUGGER_ENVIRONMENT       "PATH=%PATH%;${CMAKE_SOURCE_DIR}/bin")
         endif()
     elseif (CMAKE_SYSTEM_NAME STREQUAL Linux) 
         list(APPEND TARGET_SOURCE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/entry/linux/main.cpp>")
