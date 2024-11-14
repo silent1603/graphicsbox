@@ -12,7 +12,9 @@ include(CPack)
 include(CMakeFindDependencyMacro)
 include(FetchContent)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/)
-include(utils.)
+
+include(utils)
+
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 set(PACKAGE_INSTALL_PATH "${CMAKE_SOURCE_DIR}/package/" CACHE STRING "Assert path" )
 set(INSTALL_TARGETS_LIST "" CACHE INTERNAL  "LIBS TARGET INSTAL NAME")

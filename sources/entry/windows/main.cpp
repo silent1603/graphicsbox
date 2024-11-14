@@ -12,9 +12,6 @@
 #include "GL/wgl.h"
 #include "GL/wglext.h"
 
-#include "imgui_impl_opengl3.h"
-#include "imgui_impl_win32.h"
-
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 HDC   ghDC;

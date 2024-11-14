@@ -11,8 +11,7 @@ else()
 endif()
 
 
-target_include_directories(${TARGET} PUBLIC 
-    "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/sources/" 
+target_include_directories(${TARGET} PRIVATE "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/sources/>" 
     "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/sources/vendor/OpenGL>"  
     "$<INSTALL_INTERFACE:include>"
 )
