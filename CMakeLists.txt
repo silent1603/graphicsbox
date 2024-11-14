@@ -10,12 +10,13 @@ include(CMakePackageConfigHelpers)
 include(CheckIPOSupported)
 include(CPack)
 include(CMakeFindDependencyMacro)
-include(${CMAKE_SOURCE_DIR}/cmake/utils.cmake)
-
+include(FetchContent)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/)
+include(utils.)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 set(PACKAGE_INSTALL_PATH "${CMAKE_SOURCE_DIR}/package/" CACHE STRING "Assert path" )
 set(INSTALL_TARGETS_LIST "" CACHE INTERNAL  "LIBS TARGET INSTAL NAME")
-set(LIBS_LIST "" CACHE INTERNAL  "LIBS TARGET NAME")
+
 if (CMAKE_SYSTEM_NAME STREQUAL Linux)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
@@ -194,7 +195,6 @@ endif()
 
 find_package(Vulkan)
 
-add_subdirectory(libs)
 add_subdirectory(sources)
 
 if(TINYUI_ENABLE_TESTS)

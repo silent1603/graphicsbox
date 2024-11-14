@@ -112,10 +112,28 @@
       }
     },
     {
-      "name": "window-debug",
-      "displayName": "Window Debug",
+      "name": "X64-debug",
+      "displayName": "x64 Debug",
+      "description": "Sets debug build type and x64 arch",
       "inherits" : "debug",
       "binaryDir": "bin/window-debug",
+      "generator": "Visual Studio 17 2022",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "x64-release",
+      "displayName": "x64 Release",
+      "inherits" : "release",
+      "binaryDir": "bin/window-release",
+      "description": "Sets release build type",
       "generator": "Visual Studio 17 2022",
       "condition": {
         "type": "equals",
@@ -124,10 +142,28 @@
       }
     },
     {
-      "name": "window-release",
-      "displayName": "Window Release",
-      "inherits" : "release",
+      "name": "x86-debug",
+      "displayName": "x86 Debug ",
+      "binaryDir": "bin/window-debug", 
+      "description": "Sets debug build type and x86 arch",
+      "inherits": "debug",
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      },
+      "generator": "Visual Studio 17 2022",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "x86-release",
+      "displayName": "x86 Release",
       "binaryDir": "bin/window-release",
+      "description": "Sets release build type",
+      "inherits": "release",
       "generator": "Visual Studio 17 2022",
       "condition": {
         "type": "equals",
