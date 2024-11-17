@@ -2,12 +2,27 @@ set(TARGET GraphicsBox)
 set(TARGET_SOURCE "")
 set(LIBS "")
 
+### ISPC FILES
+set(ARCH_SIMD "")
+if("${CMAKE_SYSTEM_NAME};${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "Darwin;arm64")
+    set(ARCH_SIMD "neon-i32x4")
+    
+else()
+    set(ARCH_SIMD "sse2-i32x4")
+    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        set(ARCH_SIMD "x86")
+    endif()
+endif()
+if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
+else()
+    add_custom_command(OUTPUT simple.o COMMAND ispc --target=${ARCH_SIMD} ${CMAKE_SOURCE_DIR}/sources/application/simple.ispc -o simple.o DEPENDS ${CMAKE_SOURCE_DIR}/sources/application/simple.ispc)
+endif()
 #=== EXECUTABLE: ${TARGET}
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-    add_executable(${TARGET} WIN32)
+    add_executable(${TARGET} WIN32 simple.o )
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${TARGET})
 else()
-    add_executable(${TARGET})
+    add_executable(${TARGET} simple.o )
 endif()
 
 
@@ -43,7 +58,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
 
     set_target_properties(${TARGET} PROPERTIES LINK_FLAGS "--preload-file ${PROJECT_SOURCE_DIR}/assets/ ${EXTRA_FLAGS} ")
 else()
-        # explicitly strip dead code
+  
+    # explicitly strip dead code
     if (CMAKE_C_COMPILER_ID MATCHES "Clang")
         target_link_options(${TARGET} PRIVATE LINKER:-dead_strip)
     endif()
@@ -71,7 +87,7 @@ else()
     endif()
 endif()
 
-target_sources(${TARGET} PUBLIC ${TARGET_SOURCE})
+target_sources(${TARGET} PUBLIC ${TARGET_SOURCE}  )
 target_link_libraries(${TARGET} PUBLIC ${LIBS})
 # Set the source and destination paths for the folder
 set(ASSET_SOURCE_DIR "${CMAKE_SOURCE_DIR}/assets/")

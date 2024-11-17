@@ -1,7 +1,7 @@
 #!/bin/sh
-if [ -d /Builds/linux ]; then
+if [ -d /prj/linux ]; then
   echo "Directory exists."
 else
-  sudo  mkdir -p /Builds/linux
+  sudo  mkdir -p /prj/linux
 fi
-cmake -G Ninja -B ./Builds/linux
+cmake -G Ninja -B ./prj/linux

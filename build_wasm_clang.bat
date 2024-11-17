@@ -1,9 +1,9 @@
 @echo off
 
-if exist ./Builds/win_wasm (
-   echo has builds folder
+if exist ./prj/win_wasm (
+   echo has prj folder
 ) else (
-  mkdir Builds\win_wasm
+  mkdir prj\win_wasm
 )
 
-emmake cmake -DCMAKE_TOOLCHAIN_FILE=%cd%/tools/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake  -G "Ninja" -B ./Builds/win_wasm
+emmake cmake -DCMAKE_TOOLCHAIN_FILE=%cd%/tools/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake  -G "Ninja" -B ./prj/win_wasm

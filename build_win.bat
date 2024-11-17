@@ -1,9 +1,9 @@
 @echo off
 
-if exist ./Builds/window (
-   echo has builds folder
+if exist ./prj/window (
+   echo has prj folder
 ) else (
-  mkdir Builds\window
+  mkdir prj\window
 )
 
-cmake -G "Visual Studio 17 2022" -B ./Builds/window  
+cmake -G "Visual Studio 17 2022" -B ./prj/window  

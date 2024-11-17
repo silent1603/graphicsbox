@@ -1,2 +1,2 @@
 @echo off 
-emrun ./Builds/win_wasm/sources
+emrun ./prj/win_wasm/sources
