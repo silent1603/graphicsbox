@@ -1,28 +1,31 @@
 set(TARGET GraphicsBox)
 set(TARGET_SOURCE "")
 set(LIBS "")
-
-### ISPC FILES
-set(ARCH_SIMD "")
-if("${CMAKE_SYSTEM_NAME};${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "Darwin;arm64")
+set(TARGET_SIMD_SOURCE "")
+if(TINYUI_USE_ISPC)
+    set(ARCH_SIMD "")
+    if("${CMAKE_SYSTEM_NAME};${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "Darwin;arm64")
     set(ARCH_SIMD "neon-i32x4")
     
-else()
-    set(ARCH_SIMD "sse2-i32x4")
-    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-        set(ARCH_SIMD "x86")
+    else()
+        set(ARCH_SIMD "sse2-i32x4")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+            set(ARCH_SIMD "x86")
+        endif()
+    endif()
+
+    if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
+    else()
+        add_custom_command(OUTPUT simple.o COMMAND ispc --target=${ARCH_SIMD} ${CMAKE_SOURCE_DIR}/sources/application/simple.ispc -o simple.o DEPENDS ${CMAKE_SOURCE_DIR}/sources/application/simple.ispc)
     endif()
 endif()
-if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
-else()
-    add_custom_command(OUTPUT simple.o COMMAND ispc --target=${ARCH_SIMD} ${CMAKE_SOURCE_DIR}/sources/application/simple.ispc -o simple.o DEPENDS ${CMAKE_SOURCE_DIR}/sources/application/simple.ispc)
-endif()
+
 #=== EXECUTABLE: ${TARGET}
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-    add_executable(${TARGET} WIN32 simple.o )
+    add_executable(${TARGET} WIN32)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${TARGET})
 else()
-    add_executable(${TARGET} simple.o )
+    add_executable(${TARGET})
 endif()
 
 
@@ -31,7 +34,7 @@ target_include_directories(${TARGET} PRIVATE "$<BUILD_INTERFACE:${CMAKE_SOURCE_D
     "$<INSTALL_INTERFACE:include>"
 )
 
-
+list(APPEND TARGET_SOURCE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/common.h>")
 message(STATUS "SYSTEM ${CMAKE_SYSTEM_NAME}")
 # Emscripten-specific linker options
 if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
