@@ -23,8 +23,8 @@ set "link_content=%link_content:~1%"
 
 set source_files=
 
-for /r "sources\" %%f in (*.cpp) do (
-    set "source_files=!source_files! %%f"
-)
+FOR %%G IN (%cd%\sources\*.cpp) DO set "source_files=!source_files! %%G"
+FOR %%G IN (%cd%\sources\Entry\Windows\*.cpp) DO set "source_files=!source_files! %%G"
 
+echo  %config_content% %source_files% %link_content%
 cl %config_content% %source_files% %link_content%
