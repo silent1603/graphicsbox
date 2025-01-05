@@ -3,7 +3,7 @@
         {
             "name": "Win32-Clang",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/sources"
             ],
             "defines": [],
             "windowsSdkVersion": "10.0.22621.0",
@@ -13,32 +13,20 @@
             "compilerPath": "C:\\Program Files\\LLVM\\bin\\clang-cl.exe"
         },
         {
-            "name": "Win32-msvc",
-            "includePath": [
-                "${workspaceFolder}/**"
-            ],
-            "defines": [],
-            "windowsSdkVersion": "10.0.22621.0",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "windows-msvc-x64",
-            "compilerPath": "cl.exe"
-        },
-        {
             "name": "Mac",
-            "includePath": ["${workspaceFolder}/**"],
+            "includePath": ["${workspaceFolder}/sources"],
             "defines": [],
             "macFrameworkPath": [
               "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
-            "compilerPath": "/usr/bin/clang",
+            "compilerPath": "/usr/bin/clang++",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "macos-clang-arm64"
         },
         {
             "name": "Linux-Clang",
-            "includePath": ["${workspaceFolder}/**"],
+            "includePath": ["${workspaceFolder}/sources"],
             "defines": [],
             "compilerPath": "/usr/bin/clang++",
             "cStandard": "c17",
@@ -52,7 +40,7 @@
         },
         {
             "name": "Linux-GCC",
-            "includePath": ["${workspaceFolder}/**"],
+            "includePath": ["${workspaceFolder}/sources"],
             "defines": [],
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c17",

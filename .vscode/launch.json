@@ -5,10 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(Windows) Launch",
+            "name": "C++ Launch",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/a.exe",
+            "program": "${workspaceFolder}/bin/app.exe",
+            "symbolSearchPath": "${workspaceFolder}/bin",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
@@ -24,14 +25,25 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "enter program name, for example ${workspaceFolder}/a.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "gdb",
-            "miDebuggerPath": "/path/to/gdb",
+            "linux": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "/usr/bin/gdb",
+                "program": "${workspaceFolder}/bin/app"
+              },
+              "osx": {
+                "MIMode": "gdb",
+                "program": "${workspaceFolder}/bin/app"
+              },
+              "windows": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe",
+                "program": "${workspaceFolder}/bin/app.exe"
+            },
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -49,9 +61,20 @@
             "name": "(gdb) Attach",
             "type": "cppdbg",
             "request": "attach",
-            "program": "enter program name, for example ${workspaceFolder}/a.exe",
-            "MIMode": "gdb",
-            "miDebuggerPath": "/path/to/gdb",
+            "linux": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "/usr/bin/gdb",
+                "program": "${workspaceFolder}/bin/app",
+              },
+              "osx": {
+                "MIMode": "gdb",
+                "program": "${workspaceFolder}/bin/app",
+              },
+              "windows": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe",
+                "program": "${workspaceFolder}/bin/app.exe",
+            },
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -65,6 +88,46 @@
                 }
             ]
         },
-
+        {
+            "name": "(lldb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "linux": {
+                "MIMode": "lldb",
+                "miDebuggerPath": "/usr/bin/lldb",
+                "program": "${workspaceFolder}/bin/app",
+              },
+              "osx": {
+                "MIMode": "lldb",
+                "program": "${workspaceFolder}/bin/app",
+              },
+              "windows": {
+                "MIMode": "lldb",
+                "program": "${workspaceFolder}/bin/app.exe",
+            }
+        },
+        {
+            "name": "(lldb) Attach",
+            "type": "cppdbg",
+            "request": "attach",
+            "linux": {
+                "MIMode": "lldb",
+                "miDebuggerPath": "/usr/bin/lldb",
+                "program": "${workspaceFolder}/bin/app",
+              },
+              "osx": {
+                "MIMode": "lldb",
+                "program": "${workspaceFolder}/bin/app",
+              },
+              "windows": {
+                "MIMode": "lldb",
+                "program": "${workspaceFolder}/bin/app.exe",
+            }
+        }
     ]
 }

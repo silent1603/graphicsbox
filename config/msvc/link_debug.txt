@@ -1,0 +1,1 @@
+/MTd  /link user32.lib  /out:bin\graphicbox.exe 
