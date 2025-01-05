@@ -27,4 +27,4 @@ FOR %%G IN (%cd%\sources\*.cpp) DO set "source_files=!source_files! %%G"
 FOR %%G IN (%cd%\sources\Entry\Windows\*.cpp) DO set "source_files=!source_files! %%G"
 
 echo  %config_content% %source_files% %link_content%
-cl %config_content% %source_files% %link_content%
+cl %config_content% /I .\sources %source_files% %link_content%
