@@ -3,6 +3,8 @@
 #include "Application.h"
 #include "base.h"
 
+#include "DirectXMath.h"
+#include "d3d11.h"
 struct AppState
 {
     bool keys[256] = {false};
@@ -29,16 +31,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
     switch (umessage)
     {
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
-    case WM_CLOSE:
-        PostQuitMessage(0);
-        return 0;
-    default:
-    {
-        return MessageHandler(hwnd, umessage, wparam, lparam);
-    }
+        case WM_DESTROY:
+        {
+            PostQuitMessage(0);
+            return 0;
+        }
+        case WM_CLOSE:
+        {
+            PostQuitMessage(0);
+            return 0;
+        }
+        default:
+        {
+            return MessageHandler(hwnd, umessage, wparam, lparam);
+        }
     }
 }
 
@@ -47,29 +53,29 @@ LRESULT CALLBACK MessageHandler(HWND hwnd, UINT umessage, WPARAM wparam,
 {
     switch (umessage)
     {
-    case WM_KEYDOWN:
-    {
-        // If a key is pressed send it to the input object so it can record that
-        // state.
-        appState.keys[(unsigned int)wparam] = true;
-        return 0;
-    }
+        case WM_KEYDOWN:
+        {
+            // If a key is pressed send it to the input object so it can
+            // record that state.
+            appState.keys[(unsigned int)wparam] = true;
+            return 0;
+        }
 
-    // Check if a key has been released on the keyboard.
-    case WM_KEYUP:
-    {
-        // If a key is released then send it to the input object so it can unset
-        // the state for that key.
-        appState.keys[(unsigned int)wparam] = false;
-        return 0;
-    }
+        // Check if a key has been released on the keyboard.
+        case WM_KEYUP:
+        {
+            // If a key is released then send it to the input object so it
+            // can unset the state for that key.
+            appState.keys[(unsigned int)wparam] = false;
+            return 0;
+        }
 
-    // Any other messages send to the default message handler as our application
-    // won't make use of them.
-    default:
-    {
-        return DefWindowProc(hwnd, umessage, wparam, lparam);
-    }
+        // Any other messages send to the default message handler as our
+        // application won't make use of them.
+        default:
+        {
+            return DefWindowProc(hwnd, umessage, wparam, lparam);
+        }
     }
 }
 
@@ -131,8 +137,8 @@ bool Application_Initialize()
     // Create the window with the screen settings and get the handle to it.
     appState.hwnd = CreateWindowEx(
         WS_EX_APPWINDOW, appConfig.applicationName, appConfig.applicationName,
-        WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW, posX, posY, screenWidth,
-        screenHeight, NULL,NULL, appState.hInstance, NULL);
+        WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW, posX, posY,
+        screenWidth, screenHeight, NULL, NULL, appState.hInstance, NULL);
 
     // Bring the window up on the screen and set it as main focus.
     ShowWindow(appState.hwnd, SW_SHOW);
