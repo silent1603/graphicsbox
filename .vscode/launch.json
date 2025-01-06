@@ -1,7 +1,4 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
@@ -17,6 +14,7 @@
             "console": "externalTerminal"
         },
         {
+            "processId" :"${command:pickProcess}",
             "name": "(Windows) Attach",
             "type": "cppvsdbg",
             "request": "attach",
@@ -29,6 +27,7 @@
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
+            "program": "${workspaceFolder}/bin/app.exe",
             "externalConsole": false,
             "linux": {
                 "MIMode": "gdb",
@@ -42,7 +41,6 @@
               "windows": {
                 "MIMode": "gdb",
                 "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe",
-                "program": "${workspaceFolder}/bin/app.exe"
             },
             "setupCommands": [
                 {
@@ -61,19 +59,17 @@
             "name": "(gdb) Attach",
             "type": "cppdbg",
             "request": "attach",
+            "program": "${workspaceFolder}/bin/app.exe",
             "linux": {
                 "MIMode": "gdb",
                 "miDebuggerPath": "/usr/bin/gdb",
-                "program": "${workspaceFolder}/bin/app",
               },
               "osx": {
-                "MIMode": "gdb",
-                "program": "${workspaceFolder}/bin/app",
+                "MIMode": "gdb"
               },
               "windows": {
                 "MIMode": "gdb",
-                "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe",
-                "program": "${workspaceFolder}/bin/app.exe",
+                "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
             },
             "setupCommands": [
                 {
@@ -97,36 +93,32 @@
             "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
+            "program": "${workspaceFolder}/bin/app.exe",
             "linux": {
                 "MIMode": "lldb",
                 "miDebuggerPath": "/usr/bin/lldb",
-                "program": "${workspaceFolder}/bin/app",
               },
               "osx": {
                 "MIMode": "lldb",
-                "program": "${workspaceFolder}/bin/app",
               },
               "windows": {
                 "MIMode": "lldb",
-                "program": "${workspaceFolder}/bin/app.exe",
             }
         },
         {
             "name": "(lldb) Attach",
             "type": "cppdbg",
             "request": "attach",
+            "program": "${workspaceFolder}/bin/app.exe",
             "linux": {
                 "MIMode": "lldb",
                 "miDebuggerPath": "/usr/bin/lldb",
-                "program": "${workspaceFolder}/bin/app",
               },
               "osx": {
                 "MIMode": "lldb",
-                "program": "${workspaceFolder}/bin/app",
               },
               "windows": {
                 "MIMode": "lldb",
-                "program": "${workspaceFolder}/bin/app.exe",
             }
         }
     ]
