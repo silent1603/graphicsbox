@@ -1,1 +1,0 @@
-D:\graphicsbox\sources\Core\Apllication_Win_Impl.cpp
