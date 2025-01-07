@@ -2,7 +2,7 @@
 
 #if PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
-#include "Core/Application.h"
+#include "Entry/Application.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nCmdShow)

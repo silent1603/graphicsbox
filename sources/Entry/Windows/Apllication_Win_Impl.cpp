@@ -1,10 +1,9 @@
 #include "platforms.h"
 #if PLATFORM_WINDOWS
-#include "Application.h"
-#include "base.h"
-
 #include "DirectXMath.h"
+#include "Entry/Application.h"
 #include "d3d11.h"
+#include <stdio.h>
 struct AppState
 {
     bool keys[256] = {false};
@@ -20,7 +19,6 @@ struct AppConfig
     uint16_t screenSize[2] = {1024, 768};
     LPCSTR applicationName = "graphicbox";
     bool fullscreen = false;
-    bool vsync = true;
     float screenProperties[2] = {1000.0f, 0.3f};
 };
 
@@ -87,7 +85,6 @@ bool Application_Initialize()
     WNDCLASSEX wc;
     DEVMODE dmScreenSettings;
     int posX, posY;
-
     appState.hInstance = GetModuleHandle(NULL);
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
     wc.lpfnWndProc = WndProc;
@@ -95,16 +92,26 @@ bool Application_Initialize()
     wc.cbWndExtra = 0;
     wc.hInstance = appState.hInstance;
     wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
+    wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
     wc.lpszMenuName = NULL;
     wc.lpszClassName = appConfig.applicationName;
     wc.cbSize = sizeof(WNDCLASSEX);
-    RegisterClassEx(&wc);
-
-    // Determine the resolution of the clients desktop screen.
-    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    if (!RegisterClassEx(&wc))
+    {
+        MessageBox(NULL, "Error registering class", "Error",
+                   MB_OK | MB_ICONERROR);
+#if DEBUG_BUILD
+        char msgbuf[256];
+        sprintf(msgbuf,
+                "Error in Function = WinMain() at line = %d, with error code = "
+                "%X \n",
+                __LINE__ - 3, (unsigned int)GetLastError());
+        OutputDebugString(msgbuf);
+#endif
+        result = false;
+    }
 
     // Setup the screen settings depending on whether it is running in full
     // screen or in windowed mode.
@@ -114,8 +121,8 @@ bool Application_Initialize()
         // and 32bit.
         memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
         dmScreenSettings.dmSize = sizeof(dmScreenSettings);
-        dmScreenSettings.dmPelsWidth = (unsigned long)screenWidth;
-        dmScreenSettings.dmPelsHeight = (unsigned long)screenHeight;
+        dmScreenSettings.dmPelsWidth = GetSystemMetrics(SM_CXSCREEN);
+        dmScreenSettings.dmPelsHeight = GetSystemMetrics(SM_CYSCREEN);
         dmScreenSettings.dmBitsPerPel = 32;
         dmScreenSettings.dmFields =
             DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
@@ -133,15 +140,18 @@ bool Application_Initialize()
         posX = (GetSystemMetrics(SM_CXSCREEN) - appConfig.screenSize[0]) / 2;
         posY = (GetSystemMetrics(SM_CYSCREEN) - appConfig.screenSize[1]) / 2;
     }
-
+    RECT size = {0, 0, appConfig.screenSize[0], appConfig.screenSize[1]};
+    AdjustWindowRect(&size, WS_OVERLAPPEDWINDOW, FALSE);
     // Create the window with the screen settings and get the handle to it.
     appState.hwnd = CreateWindowEx(
         WS_EX_APPWINDOW, appConfig.applicationName, appConfig.applicationName,
         WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW, posX, posY,
-        screenWidth, screenHeight, NULL, NULL, appState.hInstance, NULL);
-
+        size.right - size.left, size.bottom - size.top, NULL, NULL,
+        appState.hInstance, NULL);
+    SetLayeredWindowAttributes(appState.hwnd, NULL, 255, LWA_ALPHA);
     // Bring the window up on the screen and set it as main focus.
     ShowWindow(appState.hwnd, SW_SHOW);
+    UpdateWindow(appState.hwnd);
     SetForegroundWindow(appState.hwnd);
     SetFocus(appState.hwnd);
 
@@ -163,14 +173,19 @@ void Application_Run()
 
         if (appState.keys[VK_ESCAPE])
         {
-            appState.running = false;
-        }
-
-        if (msg.message == WM_QUIT)
-        {
-            appState.running = false;
+            if (MessageBox(0, "Are you sure you want to exit?", "Really?",
+                           MB_YESNO | MB_ICONQUESTION) == IDYES)
+            {
+                appState.running = false;
+            }
         }
     }
+
+    if (msg.message == WM_QUIT)
+    {
+        appState.running = false;
+    }
+}
 }
 
 void Application_Shutdown()
@@ -185,5 +200,5 @@ void Application_Shutdown()
     appState.hInstance = NULL;
 }
 
-const AppState &Application_GetAppState() { return appState; }
+CONST_RELEASE AppState &Application_GetAppState() { return appState; }
 #endif
