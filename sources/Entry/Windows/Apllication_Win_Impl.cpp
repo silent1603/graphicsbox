@@ -1,28 +1,12 @@
 #include "platforms.h"
 #if PLATFORM_WINDOWS
-#include "DirectXMath.h"
-#include "Entry/Application.h"
-#include "d3d11.h"
+#include "Entry/Windows/Application_Win_Impl.h"
+
 #include <stdio.h>
-struct AppState
-{
-    bool keys[256] = {false};
-    HWND hwnd = 0;
-    HINSTANCE hInstance = 0;
-    bool running = false;
-};
 
-AppState appState;
+local_variable AppState appState;
+local_variable AppConfig appConfig;
 
-struct AppConfig
-{
-    uint16_t screenSize[2] = {1024, 768};
-    LPCSTR applicationName = "graphicbox";
-    bool fullscreen = false;
-    float screenProperties[2] = {1000.0f, 0.3f};
-};
-
-AppConfig appConfig;
 LRESULT CALLBACK MessageHandler(HWND hwnd, UINT umessage, WPARAM wparam,
                                 LPARAM lparam);
 LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
@@ -143,17 +127,17 @@ bool Application_Initialize()
     RECT size = {0, 0, appConfig.screenSize[0], appConfig.screenSize[1]};
     AdjustWindowRect(&size, WS_OVERLAPPEDWINDOW, FALSE);
     // Create the window with the screen settings and get the handle to it.
-    appState.hwnd = CreateWindowEx(
+    appState.hWindow = CreateWindowEx(
         WS_EX_APPWINDOW, appConfig.applicationName, appConfig.applicationName,
         WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW, posX, posY,
         size.right - size.left, size.bottom - size.top, NULL, NULL,
         appState.hInstance, NULL);
-    SetLayeredWindowAttributes(appState.hwnd, NULL, 255, LWA_ALPHA);
+    SetLayeredWindowAttributes(appState.hWindow, NULL, 255, LWA_ALPHA);
     // Bring the window up on the screen and set it as main focus.
-    ShowWindow(appState.hwnd, SW_SHOW);
-    UpdateWindow(appState.hwnd);
-    SetForegroundWindow(appState.hwnd);
-    SetFocus(appState.hwnd);
+    ShowWindow(appState.hWindow, SW_SHOW);
+    UpdateWindow(appState.hWindow);
+    SetForegroundWindow(appState.hWindow);
+    SetFocus(appState.hWindow);
 
     return result;
 }
@@ -165,7 +149,7 @@ void Application_Run()
     appState.running = true;
     while (appState.running)
     {
-        if (PeekMessage(&msg, appState.hwnd, 0, 0, PM_REMOVE))
+        if (PeekMessage(&msg, appState.hWindow, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
@@ -185,8 +169,9 @@ void Application_Run()
     {
         appState.running = false;
     }
+
 }
-}
+
 
 void Application_Shutdown()
 {
@@ -194,11 +179,12 @@ void Application_Shutdown()
     {
         ChangeDisplaySettings(NULL, 0);
     }
-    DestroyWindow(appState.hwnd);
-    appState.hwnd = 0;
+    DestroyWindow(appState.hWindow);
+    appState.hWindow = 0;
     UnregisterClass(appConfig.applicationName, appState.hInstance);
     appState.hInstance = NULL;
 }
 
 CONST_RELEASE AppState &Application_GetAppState() { return appState; }
+CONST_RELEASE AppConfig &Application_GetAppConfig() { return appConfig; }
 #endif
