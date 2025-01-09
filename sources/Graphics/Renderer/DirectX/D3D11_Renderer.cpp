@@ -25,6 +25,7 @@ bool Renderer_Initialize()
     // (video card).
     IDXGIAdapter *adapter;
     result = factory->EnumAdapters(0, &adapter);
+    if (FAILED(result))
     {
         return false;
     }

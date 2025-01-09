@@ -1,6 +1,6 @@
 # Introduction
 
-A game project which can run
+A game project targeting can run
 
 * windows
 * linux

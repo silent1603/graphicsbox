@@ -24,7 +24,7 @@ struct RenderState
 
 struct RenderConfig
 {
-    float screenRatio[2]; // screenNear, screenDepth
+    float screenRatio[2] ={1000.0f,0.3f}; // screenNear, screenDepth
     bool  vsync = true;
 };
 

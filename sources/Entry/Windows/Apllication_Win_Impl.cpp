@@ -1,7 +1,7 @@
 #include "platforms.h"
 #if PLATFORM_WINDOWS
 #include "Entry/Windows/Application_Win_Impl.h"
-
+#include "Graphics/Renderer/DirectX/D3D11_Renderer.h"
 #include <stdio.h>
 
 local_variable AppState  appState;
@@ -136,7 +136,7 @@ bool Application_Initialize()
     UpdateWindow(appState.hWindow);
     SetForegroundWindow(appState.hWindow);
     SetFocus(appState.hWindow);
-
+    result = Renderer_Initialize();
     return result;
 }
 
@@ -161,12 +161,13 @@ void Application_Run()
                 appState.running = false;
             }
         }
+        if (msg.message == WM_QUIT)
+        {
+            appState.running = false;
+        }
     }
 
-    if (msg.message == WM_QUIT)
-    {
-        appState.running = false;
-    }
+    Renderer_Render();
 }
 
 void Application_Shutdown()
@@ -179,6 +180,7 @@ void Application_Shutdown()
     appState.hWindow = 0;
     UnregisterClass(appConfig.applicationName, appState.hInstance);
     appState.hInstance = NULL;
+    Renderer_Shutdown();
 }
 
 CONST_RELEASE AppState  &Application_GetAppState() { return appState; }
