@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-local_variable AppState appState;
+local_variable AppState  appState;
 local_variable AppConfig appConfig;
 
 LRESULT CALLBACK MessageHandler(HWND hwnd, UINT umessage, WPARAM wparam,
@@ -61,14 +61,12 @@ LRESULT CALLBACK MessageHandler(HWND hwnd, UINT umessage, WPARAM wparam,
     }
 }
 
-void Application_SetConfig(AppConfig &config) { appConfig = config; }
-
 bool Application_Initialize()
 {
-    bool result = true;
+    bool       result = true;
     WNDCLASSEX wc;
-    DEVMODE dmScreenSettings;
-    int posX, posY;
+    DEVMODE    dmScreenSettings;
+    int        posX, posY;
     appState.hInstance = GetModuleHandle(NULL);
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
     wc.lpfnWndProc = WndProc;
@@ -169,9 +167,7 @@ void Application_Run()
     {
         appState.running = false;
     }
-
 }
-
 
 void Application_Shutdown()
 {
@@ -185,6 +181,6 @@ void Application_Shutdown()
     appState.hInstance = NULL;
 }
 
-CONST_RELEASE AppState &Application_GetAppState() { return appState; }
+CONST_RELEASE AppState  &Application_GetAppState() { return appState; }
 CONST_RELEASE AppConfig &Application_GetAppConfig() { return appConfig; }
 #endif
