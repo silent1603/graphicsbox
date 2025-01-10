@@ -1,9 +1,10 @@
 #ifndef D3D11_RENDERER_H
 #define D3D11_RENDERER_H
-#include "Graphics/Renderer/Renderer.h"
+#include "platforms.h"
 #include <d3d11.h>
 #include <directxmath.h>
-struct RenderState
+#if PLATFORMS_WINDOWS
+struct D3D11RenderState
 {
     float                    backGroundColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
     int                      videoCardMemory;
@@ -21,12 +22,5 @@ struct RenderState
     DirectX::XMMATRIX        orthoMatrix;
     D3D11_VIEWPORT           viewport;
 };
-
-struct RenderConfig
-{
-    float screenRatio[2] ={1000.0f,0.3f}; // screenNear, screenDepth
-    bool  vsync = true;
-};
-
-void Render_SetBackBufferRenderTarget();
+#endif
 #endif

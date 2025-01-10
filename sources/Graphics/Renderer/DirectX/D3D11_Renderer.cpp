@@ -1,11 +1,6 @@
-#include "Graphics/Renderer/DirectX/D3D11_Renderer.h"
+#include "Graphics/Renderer/Renderer.h"
 #include "Entry/Windows/Application_Win_Impl.h"
-
-local_variable RenderState  renderState;
-local_variable RenderConfig renderConfig;
-
-void Renderer_SetConfig(RenderConfig &config) { renderConfig = config; }
-
+#if PLATFORMS_WINDOWS
 bool Renderer_Initialize()
 {
     const AppState  &appState = Application_GetAppState();
@@ -406,14 +401,14 @@ void Renderer_Render()
               0); // Lock to screen refresh rate. : Present as fast as possible.
 }
 
-void Renderer_SetupColorBackGround(float color[4])
+void Renderer_SetupColorBackGround(RenderState& renderState)
 {
     renderState.backGroundColor[0] = color[0];
     renderState.backGroundColor[1] = color[1];
     renderState.backGroundColor[2] = color[2];
     renderState.backGroundColor[3] = color[3];
 }
-void Render_SetBackBufferRenderTarget()
+void Renderer_SetBackBufferRenderTarget()
 {
     renderState.deviceContext->OMSetRenderTargets(
         1, &renderState.renderTargetView, renderState.depthStencilView);
@@ -426,7 +421,8 @@ void Renderer_ResetViewport()
     renderState.deviceContext->OMSetRenderTargets(
         1, &renderState.renderTargetView, renderState.depthStencilView);
 }
+void Renderer_GetVideoCardInfo(RenderState&)
+{
 
-CONST_RELEASE RenderState &Renderer_GetState() { return renderState; }
-
-CONST_RELEASE RenderConfig &Renderer_GetConfig() { return renderConfig; }
+}
+#endif
