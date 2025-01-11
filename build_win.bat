@@ -25,7 +25,7 @@ set source_files=
 
 FOR %%G IN (%cd%\sources\*.cpp) DO set "source_files=!source_files! %%G"
 FOR %%G IN (%cd%\sources\Entry\Windows\*.cpp) DO set "source_files=!source_files! %%G"
-FOR %%G IN (%cd%\sources\Core\*.cpp) DO set "source_files=!source_files! %%G"
+FOR %%G IN (%cd%\sources\Graphics\Renderer\*.cpp) DO set "source_files=!source_files! %%G"
 FOR %%G IN (%cd%\sources\Graphics\Renderer\DirectX\*.cpp) DO set "source_files=!source_files! %%G"
 
 echo  %config_content% %source_files% %link_content%

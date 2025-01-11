@@ -1,7 +1,7 @@
 #include "platforms.h"
 #if PLATFORM_WINDOWS
 #include "Entry/Windows/Application_Win_Impl.h"
-#include "Graphics/Renderer/DirectX/D3D11_Renderer.h"
+#include "Graphics/Renderer/Renderer.h"
 #include <stdio.h>
 
 local_variable AppState  appState;

@@ -1,14 +1,11 @@
 #ifndef OPENGL_RENDERER_H
 #define OPENGL_RENDERER_H
-#include "Graphics/Renderer/Renderer.h"
+#include "platforms.h"
+#if PLATFORM_WINDOWS
 #include <gl/GL.h>
-struct RenderState
+#endif
+struct OpenGLRenderState
 {
-};
-
-struct RenderConfig
-{
-    bool vsync = true;
 };
 
 #endif
